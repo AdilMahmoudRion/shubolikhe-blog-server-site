@@ -35,6 +35,18 @@ async function run() {
       const result = await BlogCollection.insertOne(blog);
       res.json(result);
     });
+
+    app.get("/blog", async (req, res) => {
+      const blog = BlogCollection.find({});
+      const result = await blog.toArray();
+      res.send(result);
+    });
+    app.get("/read-blog/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const blog = await BlogCollection.findOne(query);
+      res.json(blog);
+    });
   } finally {
     //   await client.close();
   }
@@ -42,7 +54,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Hello welcome to !");
 });
 
 app.listen(port, () => {
