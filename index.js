@@ -31,7 +31,6 @@ async function run() {
   try {
     app.post("/blog", async (req, res) => {
       const blog = req.body;
-      console.log(blog);
       const result = await BlogCollection.insertOne(blog);
       res.json(result);
     });
@@ -46,6 +45,13 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const blog = await BlogCollection.findOne(query);
       res.json(blog);
+    });
+    app.get("/tag-blog/:query", async (req, res) => {
+      const queryId = req.params.query;
+      const query = { category: queryId };
+      const blog = await BlogCollection.find(query);
+      const result = await blog.toArray();
+      res.json(result);
     });
   } finally {
     //   await client.close();
