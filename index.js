@@ -29,6 +29,26 @@ async function run() {
   const BlogCollection = database.collection("blog");
 
   try {
+    app.get("/h-blog", async (req, res) => {
+      const blog = BlogCollection.find({});
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      let result;
+      const count = await blog.count();
+      if (page) {
+        result = await blog
+          .skip(page * size)
+          .limit(size)
+          .toArray();
+      } else {
+        result = await blog.toArray();
+      }
+      res.send({
+        result,
+        count,
+      });
+    });
+
     app.post("/blog", async (req, res) => {
       const blog = req.body;
       const result = await BlogCollection.insertOne(blog);
