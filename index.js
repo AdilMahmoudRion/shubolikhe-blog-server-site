@@ -23,7 +23,6 @@ const client = new MongoClient(uri, {
 });
  */
 async function run() {
-  console.log("run");
   await client.connect();
   const database = client.db("shubolikheBlog");
   const BlogCollection = database.collection("blog");
@@ -60,17 +59,27 @@ async function run() {
       const result = await blog.toArray();
       res.send(result);
     });
+
     app.get("/read-blog/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const blog = await BlogCollection.findOne(query);
       res.json(blog);
     });
+
     app.get("/tag-blog/:query", async (req, res) => {
       const queryId = req.params.query;
       const query = { category: queryId };
       const blog = await BlogCollection.find(query);
       const result = await blog.toArray();
+      res.json(result);
+    });
+
+    app.delete("/delete-blog/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: ObjectId(id) };
+      const result = await BlogCollection.deleteOne(query);
       res.json(result);
     });
   } finally {
@@ -80,9 +89,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello welcome to !");
+  res.send("Hello welcome to Adil Rion World!");
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on Adil Rion port ${port}`);
 });
