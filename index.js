@@ -26,6 +26,7 @@ async function run() {
   await client.connect();
   const database = client.db("shubolikheBlog");
   const BlogCollection = database.collection("blog");
+  const adminCollection = database.collection("admin");
 
   try {
     app.get("/h-blog", async (req, res) => {
@@ -59,6 +60,11 @@ async function run() {
       const result = await blog.toArray();
       res.send(result);
     });
+    app.get("/admin", async (req, res) => {
+      const admin = adminCollection.find({});
+      const result = await admin.toArray();
+      res.send(result);
+    });
 
     app.get("/read-blog/:id", async (req, res) => {
       const id = req.params.id;
@@ -81,6 +87,18 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await BlogCollection.deleteOne(query);
       res.json(result);
+    });
+
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+
+      const query = { email: email };
+      const user = await adminCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
     });
   } finally {
     //   await client.close();
